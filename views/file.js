@@ -4,7 +4,7 @@
 	const playingClass = 'playing',
 		crashRide = document.getElementById('crash-ride'),
 		hiHatTop = document.getElementById('hihat-top');
-
+ 
 	const animateCrashOrRide = () => {
 		crashRide.style.transform = 'rotate(0deg) scale(1.5)';
 	};
