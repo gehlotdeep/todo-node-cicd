@@ -55,7 +55,7 @@ app.get('/todo', function (req, res) {
         let todo = todolist[todoIdx];
 
         if (todo) {
-            res.render('edititem.ejs', {
+            res.render('main.html', {
                 todoIdx,
                 todo,
                 clickHandler: "func1();"
