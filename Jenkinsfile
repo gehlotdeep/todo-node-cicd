@@ -22,10 +22,10 @@ pipeline {
         }
         stage("push"){
             steps{
-                withCredentials([usernamePassword(credentialsId:"dockerHub",passwordVariable:"dockerHubPass",usernameVariable:"dockerHubUser")]){
-                sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPass}"
-                sh "docker tag todo-node-cicd:latest ${env.dockerHubUser}/todo-node-cicd:latest"
-                sh "docker push ${env.dockerHubUser}/todo-node-cicd:latest"
+                withCredentials([usernamePassword(credentialsId:"dockerhub",passwordVariable:"dockerhubPass",usernameVariable:"dockerhubUser")]){
+                sh "docker login -u ${env.dockerhubUser} -p ${env.dockerhubPass}"
+                sh "docker tag todo-node-cicd:latest ${env.dockerhubUser}/todo-node-cicd:latest"
+                sh "docker push ${env.dockerhubUser}/todo-node-cicd:latest"
                 echo 'Image push to docker Hub'
                 }
             }
