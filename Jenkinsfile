@@ -11,7 +11,7 @@ pipeline {
         }
         stage("build and test"){
             steps{
-                sh "docker build -t todo-node-cicd.git ."
+                sh "docker build -t todo-node-cicd ."
                 echo 'Building the code'
             }
         }
