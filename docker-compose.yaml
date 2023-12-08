@@ -1,7 +1,7 @@
 version: "3.3"
 
 services:
-name: todo-node-app
+  name: todo-node-app
   web:
     image: deepakgehlot/todo-node-cicd:latest
     ports:
