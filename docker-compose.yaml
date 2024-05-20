@@ -4,5 +4,5 @@ services:
   web:
     image: deepakgehlot/todo-node-cicd:latest
     ports:
-      - "4200:4200"
+      - "8000:8000"
 
