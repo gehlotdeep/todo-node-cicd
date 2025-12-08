@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Our Chat's</title>
+    <title>Real-Time Chat</title>
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
     <style>
       body {
         font-family: 'Poppins', sans-serif;
@@ -10,43 +12,57 @@
         color: #333;
         margin: 0;
         padding: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        min-height: 100vh;
       }
 
       h1 {
         background: linear-gradient(90deg, #2196f3, #21cbf3);
         color: white;
-        width: 100%;
-        margin: 0;
-        padding: 25px;
+        padding: 20px;
         text-align: center;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        margin: 0;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+      }
+
+      .container {
+        width: 90%;
+        max-width: 600px;
+        margin: 20px auto;
+      }
+
+      #usernameBox {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+      }
+
+      #username {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 16px;
       }
 
       ul {
         list-style: none;
         padding: 0;
-        width: 90%;
-        max-width: 600px;
-        margin-top: 30px;
       }
 
       ul li {
         background: white;
         border-radius: 12px;
-        margin-bottom: 12px;
         padding: 15px 20px;
+        margin-bottom: 10px;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.1);
         position: relative;
-        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
       }
 
-      ul li:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+      .user {
+        color: #1976d2;
+        font-weight: bold;
+        margin-right: 6px;
       }
 
       .delete-btn, .edit-btn {
@@ -55,7 +71,7 @@
         position: absolute;
         top: 12px;
         font-size: 18px;
-        transition: color 0.3s;
+        cursor: pointer;
       }
 
       .delete-btn {
@@ -63,160 +79,155 @@
         right: 15px;
       }
 
-      .delete-btn:hover {
-        color: #b71c1c;
-      }
-
       .edit-btn {
         color: #fbc02d;
         right: 45px;
       }
 
-      .edit-btn:hover {
-        color: #f57f17;
-      }
-
       form {
         background: white;
-        padding: 25px;
-        margin-top: 25px;
+        padding: 20px;
         border-radius: 12px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        width: 90%;
-        max-width: 600px;
-      }
-
-      label {
-        display: block;
-        margin-bottom: 10px;
-        font-weight: 600;
-        color: #1976d2;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+        margin-top: 20px;
       }
 
       input[type="text"] {
         width: 100%;
         padding: 12px;
-        margin-bottom: 15px;
-        border: 1px solid #ccc;
         border-radius: 8px;
-        font-size: 15px;
-        transition: box-shadow 0.3s ease, border-color 0.3s ease;
-      }
-
-      input[type="text"]:focus {
-        outline: none;
-        border-color: #2196f3;
-        box-shadow: 0 0 6px rgba(33, 150, 243, 0.4);
+        border: 1px solid #ccc;
+        margin-bottom: 15px;
       }
 
       input[type="submit"] {
         background: linear-gradient(90deg, #2196f3, #21cbf3);
         color: white;
-        border: none;
         padding: 10px 25px;
-        cursor: pointer;
-        font-weight: 600;
+        border: none;
         border-radius: 8px;
-        transition: background 0.3s ease, transform 0.2s ease;
+        cursor: pointer;
       }
 
-      input[type="submit"]:hover {
-        background: linear-gradient(90deg, #1976d2, #00bcd4);
-        transform: translateY(-2px);
-      }
-
-      /* Modal Styling */
+      /* Modal */
       .modal {
         display: none;
         position: fixed;
-        z-index: 100;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.4);
+        left:0; top:0;
+        width:100%; height:100%;
+        background: rgba(0,0,0,0.4);
         justify-content: center;
         align-items: center;
       }
 
       .modal-content {
-        background: white;
-        padding: 25px;
-        border-radius: 12px;
-        width: 90%;
-        max-width: 400px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        padding: 20px;
+        background:white;
+        border-radius:12px;
+        min-width: 300px;
+        box-shadow:0 4px 12px rgba(0,0,0,0.2);
       }
 
       .modal-close {
-        float: right;
-        cursor: pointer;
-        font-size: 18px;
-        color: #666;
-      }
-
-      .modal-close:hover {
-        color: #000;
+        float:right;
+        cursor:pointer;
+        font-size:20px;
       }
     </style>
   </head>
 
   <body>
-    <h1>Messages</h1>
+    <h1>Real-Time Chat</h1>
 
-    <ul>
-      <% todolist.forEach(function(todo, index) { %>
-        <li>
-          <a href="/todo/delete/<%= index %>" class="delete-btn">✘</a>
-          <a href="#" class="edit-btn" onclick="openEditModal(<%= index %>, '<%- todo %>')">✎</a>
-          <%- todo %>
-        </li>
-      <% }); %>
-    </ul>
+    <div class="container">
 
-    <form action="/todo/add/" method="post">
-      <p>
-        <label for="newtodo">Text Me</label>
-        <input type="text" name="newtodo" id="newtodo" autofocus />
-        <input type="submit" value="Send" />
-      </p>
-    </form>
+      <!-- USERNAME BOX -->
+      <div id="usernameBox">
+        <label>Your Name:</label>
+        <input type="text" id="username" placeholder="Enter your name..." />
+      </div>
 
-    <!-- ✨ Edit Modal -->
+      <!-- MESSAGE LIST -->
+      <ul id="msgList">
+        <% todolist.forEach(function(item, index) { %>
+          <li>
+            <span class="user"><%= item.user %>:</span>
+            <%= item.text %>
+
+            <!-- Edit & Delete -->
+            <a href="#" class="edit-btn" onclick="openEditModal(<%= index %>, '<%- item.text %>', '<%- item.user %>')">✎</a>
+            <a href="/todo/delete/<%= index %>" class="delete-btn">✘</a>
+          </li>
+        <% }); %>
+      </ul>
+
+      <!-- ADD MESSAGE FORM -->
+      <form action="/todo/add/" method="post">
+        <input type="hidden" name="username" id="hiddenUser">
+        <label>Message:</label>
+        <input type="text" name="newtodo" id="newtodo" placeholder="Type something..." />
+        <input type="submit" value="Send" onclick="fillUsername()" />
+      </form>
+    </div>
+
+    <!-- EDIT MODAL -->
     <div id="editModal" class="modal">
       <div class="modal-content">
         <span class="modal-close" onclick="closeEditModal()">✖</span>
+
         <h3>Edit Message</h3>
         <form id="editForm" method="post">
+          <input type="hidden" name="username" id="editUserInput" />
           <input type="hidden" name="_method" value="PUT">
-          <input type="text" name="editTodo" id="editTodoInput" />
-          <input type="submit" value="Save" />
+
+          <input type="text" name="editTodo" id="editTodoInput">
+          <input type="submit" value="Save">
         </form>
       </div>
     </div>
 
-    <script>
-      const modal = document.getElementById('editModal');
-      const editInput = document.getElementById('editTodoInput');
-      const editForm = document.getElementById('editForm');
+    <!-- SOCKET.IO -->
+    <script src="/socket.io/socket.io.js"></script>
 
-      function openEditModal(index, text) {
+    <script>
+      const socket = io();
+      const list = document.getElementById("msgList");
+
+      // Username auto-fill on submit
+      function fillUsername() {
+        document.getElementById("hiddenUser").value =
+          document.getElementById("username").value.trim() || "Unknown";
+      }
+
+      // REAL-TIME LIST UPDATE
+      socket.on("updateList", (todolist) => {
+        list.innerHTML = "";
+        todolist.forEach((item, index) => {
+          let li = document.createElement("li");
+          li.innerHTML = `
+            <span class="user">${item.user}:</span> ${item.text}
+            <a href="#" class="edit-btn" onclick="openEditModal(${index}, '${item.text}', '${item.user}')">✎</a>
+            <a href="/todo/delete/${index}" class="delete-btn">✘</a>
+          `;
+          list.appendChild(li);
+        });
+      });
+
+      /* EDIT MODAL */
+      const modal = document.getElementById("editModal");
+      const editInput = document.getElementById("editTodoInput");
+      const editForm = document.getElementById("editForm");
+
+      function openEditModal(id, text, user) {
         editInput.value = text;
-        editForm.action = `/todo/edit/${index}`;
-        modal.style.display = 'flex';
-        editInput.focus();
+        editForm.action = `/todo/edit/${id}`;
+
+        document.getElementById("editUserInput").value = user;
+        modal.style.display = "flex";
       }
 
       function closeEditModal() {
-        modal.style.display = 'none';
-      }
-
-      // Close modal if clicked outside
-      window.onclick = function(event) {
-        if (event.target == modal) {
-          closeEditModal();
-        }
+        modal.style.display = "none";
       }
     </script>
   </body>

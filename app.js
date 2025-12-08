@@ -1,88 +1,132 @@
 const express = require('express'),
     bodyParser = require('body-parser'),
-    // In order to use PUT HTTP verb to edit item
     methodOverride = require('method-override'),
-    // Mitigate XSS using sanitizer
     sanitizer = require('sanitizer'),
     app = express(),
-    port = 8000
+    port = 8000;
 
-app.use(bodyParser.urlencoded({
-    extended: false
-}));
-// https: //github.com/expressjs/method-override#custom-logic
+// Create HTTP server (required for Socket.IO)
+const http = require("http").createServer(app);
+const io = require("socket.io")(http);
+
+app.use(bodyParser.urlencoded({ extended: false }));
+
+// Method override for PUT
 app.use(methodOverride(function (req, res) {
     if (req.body && typeof req.body === 'object' && '_method' in req.body) {
-        // look in urlencoded POST bodies and delete it
         let method = req.body._method;
         delete req.body._method;
         return method
     }
 }));
 
+app.set("view engine", "ejs");
 
 let todolist = [];
 
-/* The to do list and the form are displayed */
-app.get('/todo', function (req, res) {
+/* ---------------------------
+   SOCKET.IO REAL-TIME EVENTS
+----------------------------*/
+io.on("connection", (socket) => {
+    console.log("A user connected");
+
+    // Send current list on new connection
+    socket.emit("loadList", todolist);
+
+    // Broadcast new message
+    socket.on("newTodo", (data) => {
+        todolist.push({
+            user: sanitizer.escape(data.user),
+            text: sanitizer.escape(data.text)
+        });
+
+        io.emit("updateList", todolist); // Broadcast to all
+    });
+
+    // Edit message
+    socket.on("editTodo", (data) => {
+        todolist[data.id] = {
+            user: sanitizer.escape(data.user),
+            text: sanitizer.escape(data.text)
+        };
+        io.emit("updateList", todolist);
+    });
+
+    // Delete message
+    socket.on("deleteTodo", (id) => {
+        todolist.splice(id, 1);
+        io.emit("updateList", todolist);
+    });
+});
+
+/* ---------------------------
+   NORMAL EXPRESS ROUTES
+----------------------------*/
+
+// Display list
+app.get('/todo', (req, res) => {
+    res.render('todo.ejs', {
+        todolist,
+        clickHandler: "func1();"
+    });
+});
+
+// Add item
+app.post('/todo/add/', (req, res) => {
+    let msg = sanitizer.escape(req.body.newtodo);
+    let user = sanitizer.escape(req.body.username || "Unknown");
+
+    if (msg != '') {
+        todolist.push({ user, text: msg });
+        io.emit("updateList", todolist); // real-time
+    }
+    res.redirect('/todo');
+});
+
+// Delete item
+app.get('/todo/delete/:id', (req, res) => {
+    todolist.splice(req.params.id, 1);
+    io.emit("updateList", todolist); // real-time
+    res.redirect('/todo');
+});
+
+// Single item edit view
+app.get('/todo/:id', (req, res) => {
+    let todoIdx = req.params.id;
+    let todo = todolist[todoIdx];
+
+    if (todo) {
         res.render('todo.ejs', {
-            todolist,
+            todoIdx,
+            todo,
             clickHandler: "func1();"
         });
-    })
-
-    /* Adding an item to the to do list */
-    .post('/todo/add/', function (req, res) {
-        // Escapes HTML special characters in attribute values as HTML entities
-        let newTodo = sanitizer.escape(req.body.newtodo);
-        if (req.body.newtodo != '') {
-            todolist.push(newTodo);
-        }
+    } else {
         res.redirect('/todo');
-    })
+    }
+});
 
-    /* Deletes an item from the to do list */
-    .get('/todo/delete/:id', function (req, res) {
-        if (req.params.id != '') {
-            todolist.splice(req.params.id, 1);
-        }
-        res.redirect('/todo');
-    })
+// Edit item
+app.put('/todo/edit/:id', (req, res) => {
+    let todoIdx = req.params.id;
+    let msg = sanitizer.escape(req.body.editTodo);
+    let user = sanitizer.escape(req.body.username || "Unknown");
 
-    // Get a single todo item and render edit page
-    .get('/todo/:id', function (req, res) {
-        let todoIdx = req.params.id;
-        let todo = todolist[todoIdx];
+    todolist[todoIdx] = { user, text: msg };
+    io.emit("updateList", todolist); // real-time
+    res.redirect('/todo');
+});
 
-        if (todo) {
-            res.render('todo.ejs', {
-                todoIdx,
-                todo,
-                clickHandler: "func1();"
-            });
-        } else {
-            res.redirect('/todo');
-        }
-    })
+// Default redirect
+app.use((req, res) => {
+    res.redirect('/todo');
+});
 
-    // Edit item in the todo list 
-    .put('/todo/edit/:id', function (req, res) {
-        let todoIdx = req.params.id;
-        // Escapes HTML special characters in attribute values as HTML entities
-        let editTodo = sanitizer.escape(req.body.editTodo);
-        if (todoIdx != '' && editTodo != '') {
-            todolist[todoIdx] = editTodo;
-        }
-        res.redirect('/todo');
-    })
-    /* Redirects to the to do list if the page requested is not found */
-    .use(function (req, res, next) {
-        res.redirect('/todo');
-    })
+/* ---------------------------
+   START HTTP + SOCKET.IO SERVER
+----------------------------*/
+http.listen(port, () => {
+    console.log(`Todolist running (Real-Time) at http://0.0.0.0:${port}`);
+});
 
-    .listen(port, function () {
-        // Logging to console
-        console.log(`Todolist running on http://0.0.0.0:${port}`)
-    });
-// Export app
 module.exports = app;
