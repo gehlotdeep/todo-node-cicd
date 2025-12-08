@@ -56,32 +56,12 @@
         padding: 15px 20px;
         margin-bottom: 10px;
         box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-        position: relative;
       }
 
       .user {
         color: #1976d2;
         font-weight: bold;
         margin-right: 6px;
-      }
-
-      .delete-btn, .edit-btn {
-        text-decoration: none;
-        font-weight: bold;
-        position: absolute;
-        top: 12px;
-        font-size: 18px;
-        cursor: pointer;
-      }
-
-      .delete-btn {
-        color: #e53935;
-        right: 15px;
-      }
-
-      .edit-btn {
-        color: #fbc02d;
-        right: 45px;
       }
 
       form {
@@ -108,31 +88,6 @@
         border-radius: 8px;
         cursor: pointer;
       }
-
-      /* Modal */
-      .modal {
-        display: none;
-        position: fixed;
-        left:0; top:0;
-        width:100%; height:100%;
-        background: rgba(0,0,0,0.4);
-        justify-content: center;
-        align-items: center;
-      }
-
-      .modal-content {
-        padding: 20px;
-        background:white;
-        border-radius:12px;
-        min-width: 300px;
-        box-shadow:0 4px 12px rgba(0,0,0,0.2);
-      }
-
-      .modal-close {
-        float:right;
-        cursor:pointer;
-        font-size:20px;
-      }
     </style>
   </head>
 
@@ -153,10 +108,6 @@
           <li>
             <span class="user"><%= item.user %>:</span>
             <%= item.text %>
-
-            <!-- Edit & Delete -->
-            <a href="#" class="edit-btn" onclick="openEditModal(<%= index %>, '<%- item.text %>', '<%- item.user %>')">✎</a>
-            <a href="/todo/delete/<%= index %>" class="delete-btn">✘</a>
           </li>
         <% }); %>
       </ul>
@@ -168,22 +119,6 @@
         <input type="text" name="newtodo" id="newtodo" placeholder="Type something..." />
         <input type="submit" value="Send" onclick="fillUsername()" />
       </form>
-    </div>
-
-    <!-- EDIT MODAL -->
-    <div id="editModal" class="modal">
-      <div class="modal-content">
-        <span class="modal-close" onclick="closeEditModal()">✖</span>
-
-        <h3>Edit Message</h3>
-        <form id="editForm" method="post">
-          <input type="hidden" name="username" id="editUserInput" />
-          <input type="hidden" name="_method" value="PUT">
-
-          <input type="text" name="editTodo" id="editTodoInput">
-          <input type="submit" value="Save">
-        </form>
-      </div>
     </div>
 
     <!-- SOCKET.IO -->
@@ -198,7 +133,7 @@
       // Load username from localStorage
       document.getElementById("username").value = localStorage.getItem("chatUser") || "";
 
-      // Save username whenever you type
+      // Save username whenever typed
       document.getElementById("username").addEventListener("input", function() {
         localStorage.setItem("chatUser", this.value.trim());
       });
@@ -213,33 +148,15 @@
 
       socket.on("updateList", (todolist) => {
         list.innerHTML = "";
-        todolist.forEach((item, index) => {
+        todolist.forEach((item) => {
           let li = document.createElement("li");
           li.innerHTML = `
             <span class="user">${item.user}:</span> ${item.text}
-            <a href="#" class="edit-btn" onclick="openEditModal(${index}, '${item.text}', '${item.user}')">✎</a>
-            <a href="/todo/delete/${index}" class="delete-btn">✘</a>
           `;
           list.appendChild(li);
         });
       });
 
-      /* --------------------------- EDIT MODAL --------------------------- */
-
-      const modal = document.getElementById("editModal");
-      const editInput = document.getElementById("editTodoInput");
-      const editForm = document.getElementById("editForm");
-
-      function openEditModal(id, text, user) {
-        editInput.value = text;
-        document.getElementById("editUserInput").value = localStorage.getItem("chatUser") || user;
-        editForm.action = `/todo/edit/${id}`;
-        modal.style.display = "flex";
-      }
-
-      function closeEditModal() {
-        modal.style.display = "none";
-      }
     </script>
 
   </body>
