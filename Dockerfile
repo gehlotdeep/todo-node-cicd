@@ -3,5 +3,6 @@ WORKDIR app
 COPY . .
 RUN npm install
 RUN npm install socket.io
+RUN npm install express-ejs-layouts
 EXPOSE 8000
 CMD ["node","app.js"]

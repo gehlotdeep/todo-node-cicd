@@ -2,6 +2,7 @@ const express = require('express'),
     bodyParser = require('body-parser'),
     methodOverride = require('method-override'),
     sanitizer = require('sanitizer'),
+    expressLayouts = require('express-ejs-layouts'),
     app = express(),
     port = 8000;
 
@@ -9,41 +10,35 @@ const express = require('express'),
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
 
+/* ---------------------------
+    MIDDLEWARE
+----------------------------*/
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(methodOverride('_method'));
 
-// Method override for PUT
-app.use(methodOverride(function (req, res) {
-    if (req.body && typeof req.body === 'object' && '_method' in req.body) {
-        let method = req.body._method;
-        delete req.body._method;
-        return method
-    }
-}));
-
+// EJS + Layouts
 app.set("view engine", "ejs");
-
-let todolist = [];
+app.use(expressLayouts);
+app.set("layout", "layout");   // layout.ejs
 
 /* ---------------------------
-   SOCKET.IO REAL-TIME EVENTS
+    SOCKET.IO
 ----------------------------*/
+let todolist = [];
+
 io.on("connection", (socket) => {
     console.log("A user connected");
 
-    // Send current list on new connection
     socket.emit("loadList", todolist);
 
-    // Broadcast new message
     socket.on("newTodo", (data) => {
         todolist.push({
             user: sanitizer.escape(data.user),
             text: sanitizer.escape(data.text)
         });
-
-        io.emit("updateList", todolist); // Broadcast to all
+        io.emit("updateList", todolist);
     });
 
-    // Edit message
     socket.on("editTodo", (data) => {
         todolist[data.id] = {
             user: sanitizer.escape(data.user),
@@ -52,7 +47,6 @@ io.on("connection", (socket) => {
         io.emit("updateList", todolist);
     });
 
-    // Delete message
     socket.on("deleteTodo", (id) => {
         todolist.splice(id, 1);
         io.emit("updateList", todolist);
@@ -60,70 +54,46 @@ io.on("connection", (socket) => {
 });
 
 /* ---------------------------
-   NORMAL EXPRESS ROUTES
+    ROUTES
 ----------------------------*/
-
-// Display list
 app.get('/todo', (req, res) => {
-    res.render('todo.ejs', {
-        todolist,
-        clickHandler: "func1();"
+    res.render('todo', {
+        todolist
     });
 });
 
-// Add item
 app.post('/todo/add/', (req, res) => {
     let msg = sanitizer.escape(req.body.newtodo);
     let user = sanitizer.escape(req.body.username || "Unknown");
 
-    if (msg != '') {
+    if (msg !== '') {
         todolist.push({ user, text: msg });
-        io.emit("updateList", todolist); // real-time
+        io.emit("updateList", todolist);
     }
     res.redirect('/todo');
 });
 
-// Delete item
 app.get('/todo/delete/:id', (req, res) => {
     todolist.splice(req.params.id, 1);
-    io.emit("updateList", todolist); // real-time
+    io.emit("updateList", todolist);
     res.redirect('/todo');
 });
 
-// Single item edit view
-app.get('/todo/:id', (req, res) => {
-    let todoIdx = req.params.id;
-    let todo = todolist[todoIdx];
-
-    if (todo) {
-        res.render('todo.ejs', {
-            todoIdx,
-            todo,
-            clickHandler: "func1();"
-        });
-    } else {
-        res.redirect('/todo');
-    }
-});
-
-// Edit item
 app.put('/todo/edit/:id', (req, res) => {
     let todoIdx = req.params.id;
     let msg = sanitizer.escape(req.body.editTodo);
     let user = sanitizer.escape(req.body.username || "Unknown");
 
     todolist[todoIdx] = { user, text: msg };
-    io.emit("updateList", todolist); // real-time
+    io.emit("updateList", todolist);
     res.redirect('/todo');
 });
 
 // Default redirect
-app.use((req, res) => {
-    res.redirect('/todo');
-});
+app.use((req, res) => res.redirect("/todo"));
 
 /* ---------------------------
-   START HTTP + SOCKET.IO SERVER
+    START SERVER
 ----------------------------*/
 http.listen(port, () => {
     console.log(`Todolist running (Real-Time) at http://0.0.0.0:${port}`);
