@@ -193,13 +193,24 @@
       const socket = io();
       const list = document.getElementById("msgList");
 
-      // Username auto-fill on submit
+      /* --------------------------- USERNAME SAVE PERMANENTLY --------------------------- */
+
+      // Load username from localStorage
+      document.getElementById("username").value = localStorage.getItem("chatUser") || "";
+
+      // Save username whenever you type
+      document.getElementById("username").addEventListener("input", function() {
+        localStorage.setItem("chatUser", this.value.trim());
+      });
+
+      // Auto-fill hidden input
       function fillUsername() {
-        document.getElementById("hiddenUser").value =
-          document.getElementById("username").value.trim() || "Unknown";
+        let user = localStorage.getItem("chatUser") || "Unknown";
+        document.getElementById("hiddenUser").value = user;
       }
 
-      // REAL-TIME LIST UPDATE
+      /* --------------------------- REAL TIME UPDATE --------------------------- */
+
       socket.on("updateList", (todolist) => {
         list.innerHTML = "";
         todolist.forEach((item, index) => {
@@ -213,16 +224,16 @@
         });
       });
 
-      /* EDIT MODAL */
+      /* --------------------------- EDIT MODAL --------------------------- */
+
       const modal = document.getElementById("editModal");
       const editInput = document.getElementById("editTodoInput");
       const editForm = document.getElementById("editForm");
 
       function openEditModal(id, text, user) {
         editInput.value = text;
+        document.getElementById("editUserInput").value = localStorage.getItem("chatUser") || user;
         editForm.action = `/todo/edit/${id}`;
-
-        document.getElementById("editUserInput").value = user;
         modal.style.display = "flex";
       }
 
@@ -230,5 +241,6 @@
         modal.style.display = "none";
       }
     </script>
+
   </body>
 </html>
