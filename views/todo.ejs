@@ -6,89 +6,100 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
     <style>
-      body {
-        font-family: 'Poppins', sans-serif;
-        background: linear-gradient(135deg, #e3f2fd, #bbdefb);
-        color: #333;
-        margin: 0;
-        padding: 0;
-      }
+  body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
 
-      h1 {
-        background: linear-gradient(90deg, #2196f3, #21cbf3);
-        color: white;
-        padding: 20px;
-        text-align: center;
-        margin: 0;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-      }
+    /* WhatsApp style background */
+    background: url("https://i.imgur.com/4J7z1Zy.png");
+    background-size: cover;
+    background-repeat: repeat;
+  }
 
-      .container {
-        width: 90%;
-        max-width: 600px;
-        margin: 20px auto;
-      }
+  h1 {
+    background: #075E54;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    margin: 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  }
 
-      #usernameBox {
-        background: white;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-        margin-bottom: 20px;
-      }
+  .container {
+    width: 90%;
+    max-width: 600px;
+    margin: 20px auto;
+  }
 
-      #username {
-        width: 100%;
-        padding: 12px;
-        border-radius: 8px;
-        border: 1px solid #ccc;
-        font-size: 16px;
-      }
+  #usernameBox {
+    background: rgba(255, 255, 255, 0.85);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+  }
 
-      ul {
-        list-style: none;
-        padding: 0;
-      }
+  #username {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+  }
 
-      ul li {
-        background: white;
-        border-radius: 12px;
-        padding: 15px 20px;
-        margin-bottom: 10px;
-        box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-      }
+  ul {
+    list-style: none;
+    padding: 0;
+  }
 
-      .user {
-        color: #1976d2;
-        font-weight: bold;
-        margin-right: 6px;
-      }
+  /* WhatsApp style message bubble */
+  ul li {
+    background: #dcf8c6;
+    border-radius: 18px;
+    padding: 10px 15px;
+    margin-bottom: 12px;
+    max-width: 80%;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+  }
 
-      form {
-        background: white;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-        margin-top: 20px;
-      }
+  /* Name inside bubble */
+  .user {
+    color: #075E54;
+    font-weight: bold;
+    margin-right: 6px;
+  }
 
-      input[type="text"] {
-        width: 100%;
-        padding: 12px;
-        border-radius: 8px;
-        border: 1px solid #ccc;
-        margin-bottom: 15px;
-      }
+  form {
+    background: rgba(255, 255, 255, 0.85);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    margin-top: 20px;
+  }
 
-      input[type="submit"] {
-        background: linear-gradient(90deg, #2196f3, #21cbf3);
-        color: white;
-        padding: 10px 25px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-      }
-    </style>
+  input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-bottom: 15px;
+  }
+
+  input[type="submit"] {
+    background: #128C7E;
+    color: white;
+    padding: 10px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  input[type="submit"]:hover {
+    background: #0c6f63;
+  }
+</style>
+
   </head>
 
   <body>
