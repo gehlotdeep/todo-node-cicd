@@ -20,6 +20,12 @@ app.use(methodOverride('_method'));
 app.set("view engine", "ejs");
 app.use(expressLayouts);
 app.set("layout", "layout");   // layout.ejs
+app.get("/", (req, res) => {
+    res.render("app", {
+        todolist,
+        myUser: req.query.u || ""   // your username from browser
+    });
+});
 
 /* ---------------------------
     SOCKET.IO
@@ -32,28 +38,28 @@ io.on("connection", (socket) => {
     socket.emit("loadList", todolist);
 
     socket.on("updateList", (todolist) => {
-  list.innerHTML = "";
-  let currentUser = localStorage.getItem("chatUser") || "Unknown";
+        list.innerHTML = "";
+        let currentUser = localStorage.getItem("chatUser") || "Unknown";
 
-  todolist.forEach((item) => {
-    let row = document.createElement("div");
-    let isMe = item.user === currentUser;
+        todolist.forEach((item) => {
+            let row = document.createElement("div");
+            let isMe = item.user === currentUser;
 
-    row.className = "msg-row " + (isMe ? "right" : "left");
+            row.className = "msg-row " + (isMe ? "right" : "left");
 
-    row.innerHTML = `
+            row.innerHTML = `
       <div class="bubble ${isMe ? "bubble-right" : "bubble-left"}">
         <span class="user">${item.user}</span>
         ${item.text}
       </div>
     `;
 
-    list.appendChild(row);
-  });
+            list.appendChild(row);
+        });
 
-  // Auto-scroll to bottom
-  window.scrollTo(0, document.body.scrollHeight);
-  });
+        // Auto-scroll to bottom
+        window.scrollTo(0, document.body.scrollHeight);
+    });
 
 });
 
