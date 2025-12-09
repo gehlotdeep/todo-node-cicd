@@ -31,26 +31,30 @@ io.on("connection", (socket) => {
 
     socket.emit("loadList", todolist);
 
-    socket.on("newTodo", (data) => {
-        todolist.push({
-            user: sanitizer.escape(data.user),
-            text: sanitizer.escape(data.text)
-        });
-        io.emit("updateList", todolist);
-    });
+    socket.on("updateList", (todolist) => {
+  list.innerHTML = "";
+  let currentUser = localStorage.getItem("chatUser") || "Unknown";
 
-    socket.on("editTodo", (data) => {
-        todolist[data.id] = {
-            user: sanitizer.escape(data.user),
-            text: sanitizer.escape(data.text)
-        };
-        io.emit("updateList", todolist);
-    });
+  todolist.forEach((item) => {
+    let row = document.createElement("div");
+    let isMe = item.user === currentUser;
 
-    socket.on("deleteTodo", (id) => {
-        todolist.splice(id, 1);
-        io.emit("updateList", todolist);
-    });
+    row.className = "msg-row " + (isMe ? "right" : "left");
+
+    row.innerHTML = `
+      <div class="bubble ${isMe ? "bubble-right" : "bubble-left"}">
+        <span class="user">${item.user}</span>
+        ${item.text}
+      </div>
+    `;
+
+    list.appendChild(row);
+  });
+
+  // Auto-scroll to bottom
+  window.scrollTo(0, document.body.scrollHeight);
+  });
+
 });
 
 /* ---------------------------
