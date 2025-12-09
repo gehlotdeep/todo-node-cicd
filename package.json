@@ -4,6 +4,9 @@
   "dependencies": {
     "body-parser": "^1.16.0",
     "ejs": "^2.5.5",
+    "socket.io": "^4.x",
+    "express-ejs-layouts": "^2.x",
+    "mysql2": "^3.x",
     "express": "^4.14.0",
     "method-override": "^3.0.0",
     "sanitizer": "^0.1.3"
