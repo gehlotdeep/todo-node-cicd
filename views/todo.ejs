@@ -153,17 +153,18 @@
 
     <!-- MESSAGE LIST -->
     <ul id="msgList">
-      <% todolist.forEach(function(item, index) { %>
-        <div class="msg-row <%= item.user === (locals.currentUser || '') ? 'right' : 'left' %>">
-          <div class="bubble <%= item.user === (locals.currentUser || '') ? 'bubble-right' : 'bubble-left' %>">
+      <% todolist.forEach(function(item) { %>
+        <li class="msg-row <%= item.user === myUser ? 'right' : 'left' %>">
+          <div class="bubble <%= item.user === myUser ? 'bubble-right' : 'bubble-left' %>">
             <span class="user">
               <%= item.user %>
             </span>
             <%= item.text %>
           </div>
-        </div>
+        </li>
         <% }); %>
     </ul>
+
 
 
     <!-- ADD MESSAGE FORM -->
@@ -200,26 +201,24 @@
 
     /* --------------------------- REAL TIME UPDATE --------------------------- */
 
-   socket.on("updateList", (todolist) => {
-  let myName = localStorage.getItem("chatUser") || "Unknown";
-  list.innerHTML = "";
+    socket.on("updateList", (todolist) => {
+      list.innerHTML = "";
+      let myUser = localStorage.getItem("chatUser");
 
-  todolist.forEach((item) => {
-    let isMe = item.user === myName;
+      todolist.forEach((item) => {
+        let li = document.createElement("li");
+        li.className = "msg-row " + (item.user === myUser ? 'right' : 'left');
 
-    let div = document.createElement("div");
-    div.className = `msg-row ${isMe ? "right" : "left"}`;
-
-    div.innerHTML = `
-      <div class="bubble ${isMe ? "bubble-right" : "bubble-left"}">
+        li.innerHTML = `
+      <div class="bubble ${item.user === myUser ? 'bubble-right' : 'bubble-left'}">
         <span class="user">${item.user}</span>
         ${item.text}
       </div>
     `;
+        list.appendChild(li);
+      });
+    });
 
-    list.appendChild(div);
-  });
-});
 
 
   </script>

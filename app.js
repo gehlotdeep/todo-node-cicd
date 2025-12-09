@@ -8,7 +8,20 @@ const express = require('express'),
 
 // Create HTTP server (required for Socket.IO)
 const http = require("http").createServer(app);
-const io = require("socket.io")(http);
+const io = require("socket.io")(http); const mysql = require("mysql2");
+
+// db connection
+const db = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "",    // your phpmyadmin password
+    database: "chatapp"
+});
+
+db.connect((err) => {
+    if (err) throw err;
+    console.log("MySQL Connected!");
+});
 
 /* ---------------------------
     MIDDLEWARE
@@ -20,6 +33,23 @@ app.use(methodOverride('_method'));
 app.set("view engine", "ejs");
 app.use(expressLayouts);
 app.set("layout", "layout");   // layout.ejs
+app.post("/todo/add/", (req, res) => {
+    let user = req.body.username;
+    let message = req.body.newtodo;
+
+    let sql = "INSERT INTO messages (user, text) VALUES (?, ?)";
+    db.query(sql, [user, message], (err) => {
+        if (err) throw err;
+        console.log("Message saved to DB");
+    });
+
+    // Send update to all sockets
+    todolist.push({ user, text: message });
+    io.emit("updateList", todolist);
+
+    res.redirect("/");
+});
+
 app.get("/", (req, res) => {
     res.render("app", {
         todolist,
