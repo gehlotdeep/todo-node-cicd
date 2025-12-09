@@ -1,9 +1,7 @@
-FROM node:12.2.0-alpine
-WORKDIR app
-COPY . .
+FROM node:18-alpine
+WORKDIR /app
+COPY package.json package-lock.json ./
 RUN npm install
-RUN npm install socket.io
-RUN npm install express-ejs-layouts
-CMD npm install mysql2
+COPY . .
 EXPOSE 8000
-CMD ["node","app.js"]
+CMD ["node", "app.js"]
