@@ -33,7 +33,7 @@ app.use(methodOverride('_method'));
 app.set("view engine", "ejs");
 app.use(expressLayouts);
 app.set("layout", "layout");   // layout.ejs
-app.post("/todo/add/", (req, res) => {
+/*app.post("/todo/add/", (req, res) => {
     let user = req.body.username;
     let message = req.body.newtodo;
 
@@ -48,8 +48,7 @@ app.post("/todo/add/", (req, res) => {
     io.emit("updateList", todolist);
 
     res.redirect("/");
-});
-
+});*/
 app.get("/", (req, res) => {
     res.render("app", {
         todolist,
