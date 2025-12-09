@@ -1,174 +1,229 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>Real-Time Chat</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<head>
+  <title>Real-Time Chat</title>
 
-    <style>
-  body {
-    font-family: 'Poppins', sans-serif;
-    margin: 0;
-    padding: 0;
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
-    /* WhatsApp style background */
-    background: url("https://i.imgur.com/4J7z1Zy.png");
-    background-size: cover;
-    background-repeat: repeat;
-  }
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
 
-  h1 {
-    background: #075E54;
-    color: white;
-    padding: 20px;
-    text-align: center;
-    margin: 0;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-  }
+      /* WhatsApp style background */
+      background: url("https://i.imgur.com/4J7z1Zy.png");
+      background-size: cover;
+      background-repeat: repeat;
+    }
 
-  .container {
-    width: 90%;
-    max-width: 600px;
-    margin: 20px auto;
-  }
+    h1 {
+      background: #075E54;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      margin: 0;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    }
 
-  #usernameBox {
-    background: rgba(255, 255, 255, 0.85);
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-    margin-bottom: 20px;
-  }
+    .container {
+      width: 90%;
+      max-width: 600px;
+      margin: 20px auto;
+    }
 
-  #username {
-    width: 100%;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 16px;
-  }
+    #usernameBox {
+      background: rgba(255, 255, 255, 0.85);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
 
-  ul {
-    list-style: none;
-    padding: 0;
-  }
+    #username {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
 
-  /* WhatsApp style message bubble */
-  ul li {
-    background: #dcf8c6;
-    border-radius: 18px;
-    padding: 10px 15px;
-    margin-bottom: 12px;
-    max-width: 80%;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-  }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
 
-  /* Name inside bubble */
-  .user {
-    color: #075E54;
-    font-weight: bold;
-    margin-right: 6px;
-  }
+    /* WhatsApp style message bubble */
+    /* Message row container */
+    .msg-row {
+      display: flex;
+      margin-bottom: 12px;
+    }
 
-  form {
-    background: rgba(255, 255, 255, 0.85);
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-    margin-top: 20px;
-  }
+    /* Left message */
+    .left {
+      justify-content: flex-start;
+    }
 
-  input[type="text"] {
-    width: 100%;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    margin-bottom: 15px;
-  }
+    /* Right message */
+    .right {
+      justify-content: flex-end;
+    }
 
-  input[type="submit"] {
-    background: #128C7E;
-    color: white;
-    padding: 10px 25px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-  }
+    /* Message bubble */
+    .bubble {
+      max-width: 70%;
+      padding: 12px 16px;
+      border-radius: 18px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      font-size: 15px;
+      line-height: 1.4;
+    }
 
-  input[type="submit"]:hover {
-    background: #0c6f63;
-  }
-</style>
+    /* Left bubble (others) */
+    .bubble-left {
+      background: white;
+      border-radius: 18px 18px 18px 4px;
+    }
 
-  </head>
+    /* Right bubble (you) */
+    .bubble-right {
+      background: #dcf8c6;
+      border-radius: 18px 18px 4px 18px;
+    }
 
-  <body>
-    <h1>Real-Time Chat</h1>
+    /* User name inside bubble */
+    .user {
+      color: #075E54;
+      font-weight: bold;
+      display: block;
+      margin-bottom: 4px;
+    }
 
-    <div class="container">
+    /* Name inside bubble */
+    .user {
+      color: #075E54;
+      font-weight: bold;
+      margin-right: 6px;
+    }
 
-      <!-- USERNAME BOX -->
-      <div id="usernameBox">
-        <label>Your Name:</label>
-        <input type="text" id="username" placeholder="Enter your name..." />
-      </div>
+    form {
+      background: rgba(255, 255, 255, 0.85);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+      margin-top: 20px;
+    }
 
-      <!-- MESSAGE LIST -->
-      <ul id="msgList">
-        <% todolist.forEach(function(item, index) { %>
-          <li>
-            <span class="user"><%= item.user %>:</span>
-            <%= item.text %>
-          </li>
-        <% }); %>
-      </ul>
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
+    }
 
-      <!-- ADD MESSAGE FORM -->
-      <form action="/todo/add/" method="post">
-        <input type="hidden" name="username" id="hiddenUser">
-        <label>Message:</label>
-        <input type="text" name="newtodo" id="newtodo" placeholder="Type something..." />
-        <input type="submit" value="Send" onclick="fillUsername()" />
-      </form>
+    input[type="submit"] {
+      background: #128C7E;
+      color: white;
+      padding: 10px 25px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+      background: #0c6f63;
+    }
+  </style>
+
+</head>
+
+<body>
+  <h1>Real-Time Chat</h1>
+
+  <div class="container">
+
+    <!-- USERNAME BOX -->
+    <div id="usernameBox">
+      <label>Your Name:</label>
+      <input type="text" id="username" placeholder="Enter your name..." />
     </div>
 
-    <!-- SOCKET.IO -->
-    <script src="/socket.io/socket.io.js"></script>
+    <!-- MESSAGE LIST -->
+    <ul id="msgList">
+      <% todolist.forEach(function(item, index) { %>
+        <div class="msg-row <%= item.user === (locals.currentUser || '') ? 'right' : 'left' %>">
+          <div class="bubble <%= item.user === (locals.currentUser || '') ? 'bubble-right' : 'bubble-left' %>">
+            <span class="user">
+              <%= item.user %>
+            </span>
+            <%= item.text %>
+          </div>
+        </div>
+        <% }); %>
+    </ul>
 
-    <script>
-      const socket = io();
-      const list = document.getElementById("msgList");
 
-      /* --------------------------- USERNAME SAVE PERMANENTLY --------------------------- */
+    <!-- ADD MESSAGE FORM -->
+    <form action="/todo/add/" method="post">
+      <input type="hidden" name="username" id="hiddenUser">
+      <label>Message:</label>
+      <input type="text" name="newtodo" id="newtodo" placeholder="Type something..." />
+      <input type="submit" value="Send" onclick="fillUsername()" />
+    </form>
+  </div>
 
-      // Load username from localStorage
-      document.getElementById("username").value = localStorage.getItem("chatUser") || "";
+  <!-- SOCKET.IO -->
+  <script src="/socket.io/socket.io.js"></script>
 
-      // Save username whenever typed
-      document.getElementById("username").addEventListener("input", function() {
-        localStorage.setItem("chatUser", this.value.trim());
-      });
+  <script>
+    const socket = io();
+    const list = document.getElementById("msgList");
 
-      // Auto-fill hidden input
-      function fillUsername() {
-        let user = localStorage.getItem("chatUser") || "Unknown";
-        document.getElementById("hiddenUser").value = user;
-      }
+    /* --------------------------- USERNAME SAVE PERMANENTLY --------------------------- */
 
-      /* --------------------------- REAL TIME UPDATE --------------------------- */
+    // Load username from localStorage
+    document.getElementById("username").value = localStorage.getItem("chatUser") || "";
 
-      socket.on("updateList", (todolist) => {
-        list.innerHTML = "";
-        todolist.forEach((item) => {
-          let li = document.createElement("li");
-          li.innerHTML = `
-            <span class="user">${item.user}:</span> ${item.text}
-          `;
-          list.appendChild(li);
-        });
-      });
+    // Save username whenever typed
+    document.getElementById("username").addEventListener("input", function () {
+      localStorage.setItem("chatUser", this.value.trim());
+    });
 
-    </script>
+    // Auto-fill hidden input
+    function fillUsername() {
+      let user = localStorage.getItem("chatUser") || "Unknown";
+      document.getElementById("hiddenUser").value = user;
+    }
 
-  </body>
+    /* --------------------------- REAL TIME UPDATE --------------------------- */
+
+   socket.on("updateList", (todolist) => {
+  let myName = localStorage.getItem("chatUser") || "Unknown";
+  list.innerHTML = "";
+
+  todolist.forEach((item) => {
+    let isMe = item.user === myName;
+
+    let div = document.createElement("div");
+    div.className = `msg-row ${isMe ? "right" : "left"}`;
+
+    div.innerHTML = `
+      <div class="bubble ${isMe ? "bubble-right" : "bubble-left"}">
+        <span class="user">${item.user}</span>
+        ${item.text}
+      </div>
+    `;
+
+    list.appendChild(div);
+  });
+});
+
+
+  </script>
+
+</body>
+
 </html>
