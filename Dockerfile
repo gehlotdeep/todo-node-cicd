@@ -3,7 +3,7 @@ WORKDIR app
 COPY . .
 RUN npm install
 RUN npm install socket.io
-CMD npm install express-ejs-layouts
+RUN npm install express-ejs-layouts
 CMD npm install mysql2
 EXPOSE 8000
 CMD ["node","app.js"]
