@@ -1,6 +1,15 @@
-FROM node:12.2.0-alpine
-WORKDIR app
+FROM node:18-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm config set registry https://registry.npmjs.org/ \
+ && npm install --force \
+ && npm cache clean --force
+
 COPY . .
-RUN npm install --force && npm clear cache
+
 EXPOSE 8000
-CMD ["node","app.js"]
+
+CMD ["node", "app.js"]
